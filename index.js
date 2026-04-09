@@ -2,19 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 require('dotenv').config();
-const port = process.env.PORT || 5000
-const { MongoClient, ServerApiVersion } = require('mongodb');
-
+const port = process.env.PORT || 5000;
+// Ekhane ObjectId add kora hoyeche
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 app.use(cors());
-
 app.use(express.json());
 
-
 const uri = `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@ac-k50mwtj-shard-00-00.4j5c4iq.mongodb.net:27017,ac-k50mwtj-shard-00-01.4j5c4iq.mongodb.net:27017,ac-k50mwtj-shard-00-02.4j5c4iq.mongodb.net:27017/?ssl=true&replicaSet=atlas-xqdkdv-shard-0&authSource=admin&appName=Cluster0`;
-
-
-
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -26,51 +21,50 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+    const coffeesCollection = client.db('coffeeDB').collection('coffees');
 
-    const coffeesCollection=client.db('coffeeDB').collection('coffees');
-
-    app.get('/coffees',async(req,res)=>{
-
-      const result=await coffeesCollection.find().toArray();
+    // 1. Get All Coffees
+    app.get('/coffees', async (req, res) => {
+      const result = await coffeesCollection.find().toArray();
       res.send(result);
+    });
 
-    })
-
+    // 2. Add Coffee (Post)
     app.post("/coffees", async (req, res) => {
       const newCoffee = req.body;
-      const result=await coffeesCollection.insertOne(newCoffee)
-      res.send(result)
+      const result = await coffeesCollection.insertOne(newCoffee);
+      res.send(result);
+    });
 
-      // delete
+    // 3. Delete Coffee (Eti ekhon post er baire)
+    app.delete("/coffees/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }; // Ekhon ObjectId kaj korbe
+      const result = await coffeesCollection.deleteOne(query);
+      res.send(result);
+    });
 
-      app.delete("/coffees/:id",async(req,res)=>{
-        const id =req.params.id;
-        const query={_id: new ObjectId(id)}
-        const result=await coffeesCollection.deleteOne(query);
-        res.send(result);
-      })
-    })
+     // 3. Update Coffee (Eti ekhon post er baire)
+    app.get("/coffees/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }; // Ekhon ObjectId kaj korbe
+      const result = await coffeesCollection.findOne(query);
+      res.send(result);
+    });
 
-    // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    console.log("Connected to MongoDB!");
   } finally {
-    // Ensures that the client will close when you finish/error
-    // await client.close();
+    // client.close() bondho thaka thik ache
   }
 }
 run().catch(console.dir);
-console.log("USER:", process.env.DB_USER);
-console.log("PASS:", process.env.DB_PASS);
-console.log("URI:", uri);
 
 app.get("/", (req, res) => {
-  res.send("Coffee Server Getting hotter")
-
-})
+  res.send("Coffee Server Getting hotter");
+});
 
 app.listen(port, () => {
-  console.log(`Coffee Server Is Running On ${port}`)
-})
+  console.log(`Coffee Server Is Running On ${port}`);
+});
