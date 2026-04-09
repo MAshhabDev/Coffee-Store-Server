@@ -10,17 +10,10 @@ app.use(cors());
 
 app.use(express.json());
 
-// k2p669inr9gzwtAp
-// zI2qM2htNLapc1Ul
-// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.4j5c4iq.mongodb.net/?appName=Cluster0`;
-// const uri = "mongodb://CoffeeShop:zI2qM2htNLapc1Ul@ac-k50mwtj-shard-00-00.4j5c4iq.mongodb.net:27017,ac-k50mwtj-shard-00-01.4j5c4iq.mongodb.net:27017,ac-k50mwtj-shard-00-02.4j5c4iq.mongodb.net:27017/?ssl=true&replicaSet=atlas-xqdkdv-shard-0&authSource=admin&appName=Cluster0";
 
 const uri = `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@ac-k50mwtj-shard-00-00.4j5c4iq.mongodb.net:27017,ac-k50mwtj-shard-00-01.4j5c4iq.mongodb.net:27017,ac-k50mwtj-shard-00-02.4j5c4iq.mongodb.net:27017/?ssl=true&replicaSet=atlas-xqdkdv-shard-0&authSource=admin&appName=Cluster0`;
 
-console.log("USER length:", process.env.DB_USER.length);
-console.log("PASS length:", process.env.DB_PASS.length);
 
-console.log("manual PASS length:", "h41l86qIjSdzkaHu".length);
 
 
 const client = new MongoClient(uri, {
