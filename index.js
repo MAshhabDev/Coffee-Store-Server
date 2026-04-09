@@ -45,12 +45,39 @@ async function run() {
       res.send(result);
     });
 
-     // 3. Update Coffee (Eti ekhon post er baire)
+    // 3. Update Coffee (Eti ekhon post er baire)
     app.get("/coffees/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) }; // Ekhon ObjectId kaj korbe
       const result = await coffeesCollection.findOne(query);
       res.send(result);
+    });
+
+    app.put('/coffees/:id', async (req, res) => {
+
+      const id = req.params.id;
+      const coffee = req.body;
+
+      const filter = { _id: new ObjectId(id) };
+
+      const updatedDoc = {
+        $set: {
+          name: coffee.name,
+          chef: coffee.chef,
+          supplier: coffee.supplier,
+          taste: coffee.taste,
+          category: coffee.category,
+          details: coffee.details,
+          photo: coffee.photo
+        }
+      };
+
+      const options = { upsert: false };
+
+      const result = await coffeesCollection.updateOne(filter, updatedDoc, options);
+
+      res.send(result);
+
     });
 
     await client.db("admin").command({ ping: 1 });
