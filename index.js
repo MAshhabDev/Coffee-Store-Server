@@ -86,10 +86,17 @@ async function run() {
 
     app.post("/users", async (req, res) => {
       const newUser = req.body;
-      const result = await coffeesCollection.insertOne(newUser);
+      const result = await usersCollection.insertOne(newUser);
       res.send(result);
     });
 
+    // Update user sob user pawart jonno
+
+    app.get("/users", async (req, res) => {
+      const cursor = usersCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
 
     await client.db("admin").command({ ping: 1 });
