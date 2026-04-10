@@ -23,6 +23,8 @@ async function run() {
   try {
     await client.connect();
     const coffeesCollection = client.db('coffeeDB').collection('coffees');
+    const usersCollection = client.db('coffeeDB').collection('users');
+
 
     // 1. Get All Coffees
     app.get('/coffees', async (req, res) => {
@@ -79,6 +81,16 @@ async function run() {
       res.send(result);
 
     });
+
+    // create user
+
+    app.post("/users", async (req, res) => {
+      const newUser = req.body;
+      const result = await coffeesCollection.insertOne(newUser);
+      res.send(result);
+    });
+
+
 
     await client.db("admin").command({ ping: 1 });
     console.log("Connected to MongoDB!");
