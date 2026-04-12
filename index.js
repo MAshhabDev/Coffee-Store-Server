@@ -98,6 +98,30 @@ async function run() {
       res.send(result);
     });
 
+    
+    // 3. Delete User (Eti ekhon post er baire)
+    app.delete("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }; // Ekhon ObjectId kaj korbe
+      const result = await usersCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // Update User
+
+    app.patch("/users/", async (req, res) => {
+      const email = req.body.email;
+      const filter = { email }; 
+      
+      const updatedDoc={
+        $set:{
+          lastSignInTime:req.body?.lastSignInTime
+        }
+      }
+      const result = await usersCollection.updateOne(filter,updatedDoc);
+      res.send(result);
+    });
+
 
     await client.db("admin").command({ ping: 1 });
     console.log("Connected to MongoDB!");
